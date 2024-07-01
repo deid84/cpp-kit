@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.15)
 #
 # Project details
 #
-
 project(
   "CppKit"
   VERSION 0.1.0
@@ -11,26 +10,37 @@ project(
 )
 
 #
-# Set project options
+# Include cmake scripts
 #
+include(cmake/StandardSettings.cmake) # project main options
+include(cmake/StaticAnalyzers.cmake)  # clang-tidy and cppcheck options
+include(cmake/SourcesAndHeaders.cmake)# .hpp and .cpp declaration
+include(cmake/Utils.cmake)            # various utilities
+include(cmake/Conan.cmake)            # pkg manager options
+include(cmake/Vcpkg.cmake)            # pkg manager options
+include(cmake/Doxygen.cmake)          # documentation options
 
-include(cmake/StandardSettings.cmake)
-include(cmake/StaticAnalyzers.cmake)
-include(cmake/Utils.cmake)
+#
+# Set default build type (if not declared)
+#
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
 endif()
 message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
 
+#
+# Add "-D_DEBUG" flag for debug build type under UNIX-like environments.
+# This will allow to use the same _DEBUG macro in both Linux as well as Windows
+# for debug specific code
+#
 if (UNIX)
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
 endif (UNIX)
 
 
 #
-# Setup alternative names
+# Setup alternative names (UPPERCASE and lowercase)
 #
-
 if(${PROJECT_NAME}_USE_ALT_NAMES)
   string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
   string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
@@ -42,25 +52,13 @@ endif()
 #
 # Prevent building in the source directory
 #
-
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.\n")
 endif()
 
 #
-# Enable package managers
-#
-
-include(cmake/Conan.cmake)
-include(cmake/Vcpkg.cmake)
-
-#
 # Create library, setup header and source files
 #
-
-# Find all headers and implementation files
-include(cmake/SourcesAndHeaders.cmake)
-
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME} ${exe_sources})
 
@@ -131,7 +129,6 @@ message(STATUS "Added all header and implementation files.\n")
 #
 # Set the project standard and warnings
 #
-
 if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 else()
@@ -145,12 +142,6 @@ include(cmake/CompilerWarnings.cmake)
 set_project_warnings(${PROJECT_NAME})
 
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
-
-#
-# Enable Doxygen
-#
-
-include(cmake/Doxygen.cmake)
 
 #
 # Model project dependencies
@@ -192,7 +183,6 @@ verbose_message("Successfully added all dependencies and linked against them.")
 #
 # Set the build/user include directories
 #
-
 # Allow usage of header files in the `src` directory, but only for utilities
 if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   target_include_directories(
@@ -227,7 +217,6 @@ message(STATUS "Finished setting up include directories.")
 #
 # Provide alias to library for
 #
-
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 else()
@@ -239,13 +228,11 @@ verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
 #
 # Format the project using the `clang-format` target (i.e: cmake --build build --target clang-format)
 #
-
 add_clang_format_target()
 
 #
 # Install library for easy downstream inclusion
 #
-
 include(GNUInstallDirs)
 install(
   TARGETS
@@ -278,7 +265,6 @@ install(
 #
 # Add version header
 #
-
 configure_file(
   ${CMAKE_CURRENT_LIST_DIR}/cmake/version.hpp.in
   include/${PROJECT_NAME_LOWERCASE}/version.hpp
@@ -295,7 +281,6 @@ install(
 #
 # Install the `include` directory
 #
-
 install(
   DIRECTORY
   include/${PROJECT_NAME_LOWERCASE}
@@ -308,7 +293,6 @@ verbose_message("Install targets successfully built. Install with `cmake --build
 #
 # Quick `ConfigVersion.cmake` creation
 #
-
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
   ${PROJECT_NAME}ConfigVersion.cmake
@@ -336,7 +320,6 @@ install(
 #
 # Generate export header if specified
 #
-
 if(${PROJECT_NAME}_GENERATE_EXPORT_HEADER)
   include(GenerateExportHeader)
   generate_export_header(${PROJECT_NAME})
@@ -355,7 +338,6 @@ message(STATUS "Finished building requirements for installing the package.\n")
 #
 # Unit testing setup
 #
-
 if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
