@@ -1,9 +1,3 @@
-# from here:
-#
-# https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Avai
-# lable.md
-# Courtesy of Jason Turner
-
 function(set_project_warnings project_name)
   set(MSVC_WARNINGS
       /W4     # Baseline reasonable warnings

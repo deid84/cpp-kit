@@ -1,5 +1,5 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Hello cmake" << std::endl;
+    std::cout << "Hello cmake new" << std::endl;
 }

@@ -1,7 +1,6 @@
 #
 # Print a message only if the `VERBOSE_OUTPUT` option is on
 #
-
 function(verbose_message content)
     if(${PROJECT_NAME}_VERBOSE_OUTPUT)
 			message(STATUS ${content})
@@ -11,7 +10,6 @@ endfunction()
 #
 # Add a target for formating the project using `clang-format` (i.e: cmake --build build --target clang-format)
 #
-
 function(add_clang_format_target)
     if(NOT ${PROJECT_NAME}_CLANG_FORMAT_BINARY)
 			find_program(${PROJECT_NAME}_CLANG_FORMAT_BINARY clang-format)

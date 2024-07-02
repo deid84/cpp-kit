@@ -2,7 +2,6 @@ if(${PROJECT_NAME}_ENABLE_CONAN)
   #
   # Setup Conan requires and options here:
   #
-
   set(${PROJECT_NAME}_CONAN_REQUIRES "")
   set(${PROJECT_NAME}_CONAN_OPTIONS "")
 

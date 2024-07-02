@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
+
 #
 # Project details
 #
@@ -8,6 +9,7 @@ project(
   VERSION 0.1.0
   LANGUAGES CXX
 )
+
 
 #
 # Include cmake scripts
@@ -20,6 +22,7 @@ include(cmake/Conan.cmake)            # pkg manager options
 include(cmake/Vcpkg.cmake)            # pkg manager options
 include(cmake/Doxygen.cmake)          # documentation options
 
+
 #
 # Set default build type (if not declared)
 #
@@ -27,6 +30,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
 endif()
 message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
+
 
 #
 # Add "-D_DEBUG" flag for debug build type under UNIX-like environments.
@@ -49,6 +53,7 @@ else()
   set(PROJECT_NAME_UPPERCASE ${PROJECT_NAME})
 endif()
 
+
 #
 # Prevent building in the source directory
 #
@@ -56,8 +61,12 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.\n")
 endif()
 
+
 #
-# Create library, setup header and source files
+# Include executable, headers and sources based on three options:
+# 1. Executable
+# 2. Headers Only
+# 3. Library
 #
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
   add_executable(${PROJECT_NAME} ${exe_sources})
@@ -107,6 +116,15 @@ else()
   endif()
 endif()
 
+message(STATUS "Added all header and implementation files.\n")
+
+
+#
+# Set project targets:
+# 1. Archive files (.a .lib)
+# 2. Shared libraries ().so .dll)
+# 3. Executables
+#
 set_target_properties(
   ${PROJECT_NAME}
   PROPERTIES
@@ -124,7 +142,6 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   )
 endif()
 
-message(STATUS "Added all header and implementation files.\n")
 
 #
 # Set the project standard and warnings
@@ -143,28 +160,6 @@ set_project_warnings(${PROJECT_NAME})
 
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
-#
-# Model project dependencies
-#
-
-# Identify and link with the specific "packages" the project uses
-#find_package(package_name package_version REQUIRED package_type [other_options])
-#target_link_libraries(
-#  ${PROJECT_NAME}
-#  PUBLIC
-#    dependency1 ...
-#  PRIVATE
-#    dependency2 ...
-#    ${PROJECT_NAME}_PROJECT_OPTIONS
-#    ${PROJECT_NAME}_PROJECT_WARNINGS
-#)
-#if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-#  target_link_libraries(
-#    ${PROJECT_NAME}_LIB
-#    PUBLIC
-#      dependency1 ...
-#  )
-#endif()
 
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary
@@ -180,10 +175,11 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 verbose_message("Successfully added all dependencies and linked against them.")
 
+
 #
 # Set the build/user include directories
-#
 # Allow usage of header files in the `src` directory, but only for utilities
+#
 if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   target_include_directories(
     ${PROJECT_NAME}
@@ -214,6 +210,7 @@ endif()
 
 message(STATUS "Finished setting up include directories.")
 
+
 #
 # Provide alias to library for
 #
@@ -224,6 +221,7 @@ else()
 endif()
 
 verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
+
 
 #
 # Format the project using the `clang-format` target (i.e: cmake --build build --target clang-format)

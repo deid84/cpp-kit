@@ -1,5 +1,5 @@
 set(sources
-    src/tmp.cpp
+    src/cli.cpp
 )
 
 set(exe_sources
@@ -8,9 +8,9 @@ set(exe_sources
 )
 
 set(headers
-    include/cpp-kit/tmp.hpp
+    include/cppkit/cli.hpp
 )
 
 set(test_sources
-  src/tmp_test.cpp
+  src/cli_test.cpp
 )

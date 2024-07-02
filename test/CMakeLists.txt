@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.15)
 #
 # Project details
 #
-
 project(
   ${CMAKE_PROJECT_NAME}Tests
   LANGUAGES CXX
@@ -18,13 +17,11 @@ foreach(file ${test_sources})
   #
   # Set the compiler standard
   #
-
   target_compile_features(${test_name}_Tests PUBLIC cxx_std_17)
 
   #
   # Setup code coverage if enabled
   #
-
   if (${CMAKE_PROJECT_NAME}_ENABLE_CODE_COVERAGE)
     target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
     target_link_options(${CMAKE_PROJECT_NAME} PUBLIC -fprofile-arcs -ftest-coverage)
@@ -33,9 +30,8 @@ foreach(file ${test_sources})
 
   #
   # Load the desired unit testing framework
-  #
   # Currently supported: GoogleTest (and GoogleMock), Catch2.
-
+  #
   if(${CMAKE_PROJECT_NAME}_BUILD_EXECUTABLE)
     set(${CMAKE_PROJECT_NAME}_TEST_LIB ${CMAKE_PROJECT_NAME}_LIB)
   else()
@@ -72,7 +68,6 @@ foreach(file ${test_sources})
   #
   # Add the unit tests
   #
-
   add_test(
     NAME
       ${test_name}
